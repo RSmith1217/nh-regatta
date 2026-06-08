@@ -1,4 +1,4 @@
-const GOOGLE_APPS_SCRIPT_URL = "";
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8ODeoHIgss_rHIJAeGeRooXDmZKF7qbI2Cyqm631uUZPITYKJoMds6TBWxVWvVlQp/exec";
 
 const races = [
   {
