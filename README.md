@@ -8,8 +8,10 @@ This is entertainment-only. No real money, prizes, or gambling mechanics are inv
 
 - Static race board with the six heats from the provided schedule.
 - Fake bet slip with name, boat pick, wager amount, and prediction note.
+- Optional prop bets for winning time, first to sink, best boat name, and race-day chaos.
 - Local browser storage for alpha feedback and demos.
 - Public action leaderboard based on local picks.
+- Prop Pulse summary for the side-action favorites.
 - Simple result console for posting heat winners and times.
 - Optional Google Apps Script endpoint for writing fake bets to a Google Sheet.
 
@@ -28,7 +30,7 @@ Then visit `http://localhost:4173`.
 1. Create a Google Sheet.
 2. Open **Extensions > Apps Script**.
 3. Paste the contents of `google-apps-script.js`.
-4. Deploy as a web app.
+4. Deploy as a web app. If you update the script later, deploy a new version.
 5. Allow access for anyone with the link.
 6. Copy the web app URL into `GOOGLE_APPS_SCRIPT_URL` in `app.js`.
 

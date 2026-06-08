@@ -46,10 +46,10 @@ const races = [
 ];
 
 const demoBets = [
-  { name: "Commissioner Al", boatId: "minecraft", heat: 2, wager: 50, note: "Blocky hull. Questionable hydrodynamics." },
-  { name: "Dockside Analyst", boatId: "artemis-3", heat: 1, wager: 35, note: "Space program budget advantage." },
-  { name: "Retirement Desk", boatId: "top-gun", heat: 2, wager: 20, note: "Feels aerodynamic." },
-  { name: "Pool Reporter", boatId: "ocean-corals", heat: 6, wager: 45, note: "Name suggests water experience." }
+  { name: "Commissioner Al", boatId: "minecraft", heat: 2, wager: 50, exactTime: "1:31", firstSink: "edmund-fitzgerald", bestName: "minecraft", chaosCall: "Structural concern", note: "Blocky hull. Questionable hydrodynamics." },
+  { name: "Dockside Analyst", boatId: "artemis-3", heat: 1, wager: 35, exactTime: "1:44", firstSink: "michael-jackson", bestName: "artemis-3", chaosCall: "Photo finish", note: "Space program budget advantage." },
+  { name: "Retirement Desk", boatId: "top-gun", heat: 2, wager: 20, exactTime: "1:26", firstSink: "", bestName: "top-gun", chaosCall: "Surprise comeback", note: "Feels aerodynamic." },
+  { name: "Pool Reporter", boatId: "ocean-corals", heat: 6, wager: 45, exactTime: "1:58", firstSink: "edmund-fitzgerald", bestName: "bucees", chaosCall: "Dramatic spinout", note: "Name suggests water experience." }
 ];
 
 const storeKeys = {
@@ -158,6 +158,19 @@ function populateBoatSelect() {
   });
 }
 
+function populatePropSelects() {
+  ["first-sink", "best-name"].forEach((selectId) => {
+    const select = byId(selectId);
+    select.innerHTML = '<option value="">No pick</option>';
+    allBoats.forEach((boat) => {
+      const option = document.createElement("option");
+      option.value = boat.id;
+      option.textContent = `Heat ${boat.heat}: ${boat.name}`;
+      select.appendChild(option);
+    });
+  });
+}
+
 function selectBoat(boatId) {
   byId("boat-pick").value = boatId;
   document.querySelectorAll(".boat-card").forEach((card) => {
@@ -197,6 +210,58 @@ function renderLeaderboard() {
       `;
       container.appendChild(card);
     });
+}
+
+function renderPropPulse() {
+  const container = byId("prop-pulse");
+  const bets = getBets();
+  const firstSink = topChoice(bets, "firstSink");
+  const bestName = topChoice(bets, "bestName");
+  const chaosCall = topChoice(bets, "chaosCall");
+  const exactTimes = bets
+    .map((bet) => bet.exactTime)
+    .filter(Boolean);
+
+  container.innerHTML = [
+    {
+      label: "First to Sink",
+      value: firstSink ? getBoat(firstSink.value)?.name || firstSink.value : "No favorite yet",
+      detail: firstSink ? `${firstSink.count} fake pick${firstSink.count === 1 ? "" : "s"}` : "Open water"
+    },
+    {
+      label: "Best Boat Name",
+      value: bestName ? getBoat(bestName.value)?.name || bestName.value : "No favorite yet",
+      detail: bestName ? `${bestName.count} nod${bestName.count === 1 ? "" : "s"}` : "Awaiting opinions"
+    },
+    {
+      label: "Chaos Call",
+      value: chaosCall?.value || "No favorite yet",
+      detail: chaosCall ? `${chaosCall.count} prediction${chaosCall.count === 1 ? "" : "s"}` : "Calm seas, allegedly"
+    },
+    {
+      label: "Time Guesses",
+      value: `${exactTimes.length}`,
+      detail: exactTimes.length === 1 ? "officially bold guess" : "officially bold guesses"
+    }
+  ].map((item) => `
+    <article class="prop-card">
+      <span class="boat-meta">${item.label}</span>
+      <strong>${item.value}</strong>
+      <span class="leader-stat">${item.detail}</span>
+    </article>
+  `).join("");
+}
+
+function topChoice(items, key) {
+  const counts = items.reduce((map, item) => {
+    const value = item[key];
+    if (!value) return map;
+    map.set(value, (map.get(value) || 0) + 1);
+    return map;
+  }, new Map());
+  return [...counts.entries()]
+    .map(([value, count]) => ({ value, count }))
+    .sort((a, b) => b.count - a.count || a.value.localeCompare(b.value))[0];
 }
 
 function populateResultsForm() {
@@ -263,12 +328,19 @@ function bindEvents() {
       boatId: boat.id,
       boatName: boat.name,
       wager: Number(byId("wager").value),
+      exactTime: byId("exact-time").value.trim(),
+      firstSink: byId("first-sink").value,
+      firstSinkName: getBoat(byId("first-sink").value)?.name || "",
+      bestName: byId("best-name").value,
+      bestNameBoatName: getBoat(byId("best-name").value)?.name || "",
+      chaosCall: byId("chaos-call").value,
       note: byId("note").value.trim()
     };
 
     const bets = [bet, ...getBets()];
     writeJson(storeKeys.bets, bets);
     renderLeaderboard();
+    renderPropPulse();
     renderRaceBoard(document.querySelector(".tool-button.active")?.dataset.filter || "all");
 
     const posted = await submitToSheet(bet);
@@ -296,6 +368,7 @@ function bindEvents() {
     writeJson(storeKeys.results, {});
     renderRaceBoard();
     renderLeaderboard();
+    renderPropPulse();
     renderResults();
   });
 
@@ -317,10 +390,12 @@ function bindEvents() {
 
 function init() {
   populateBoatSelect();
+  populatePropSelects();
   populateResultsForm();
   bindEvents();
   renderRaceBoard();
   renderLeaderboard();
+  renderPropPulse();
   renderResults();
 }
 

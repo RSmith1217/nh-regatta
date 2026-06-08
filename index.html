@@ -104,6 +104,36 @@
             </div>
           </label>
 
+          <fieldset class="prop-fieldset">
+            <legend>Optional prop bets</legend>
+            <label for="exact-time">
+              Winning time
+              <input id="exact-time" name="exactTime" type="text" placeholder="Example: 1:42">
+            </label>
+            <label for="first-sink">
+              First to sink
+              <select id="first-sink" name="firstSink">
+                <option value="">No pick</option>
+              </select>
+            </label>
+            <label for="best-name">
+              Best boat name
+              <select id="best-name" name="bestName">
+                <option value="">No pick</option>
+              </select>
+            </label>
+            <label for="chaos-call">
+              Chaos call
+              <select id="chaos-call" name="chaosCall">
+                <option value="">No pick</option>
+                <option value="Photo finish">Photo finish</option>
+                <option value="Dramatic spinout">Dramatic spinout</option>
+                <option value="Surprise comeback">Surprise comeback</option>
+                <option value="Structural concern">Structural concern</option>
+              </select>
+            </label>
+          </fieldset>
+
           <label for="note">
             Prediction note
             <textarea id="note" name="note" rows="3" placeholder="Why is this cardboard masterpiece unstoppable?"></textarea>
@@ -123,6 +153,13 @@
           <button id="reset-demo" class="button secondary" type="button">Reset Demo Picks</button>
         </div>
         <div id="leaderboard-list" class="leaderboard-grid"></div>
+        <div class="prop-panel" aria-labelledby="prop-heading">
+          <div>
+            <p class="eyebrow">Side Action</p>
+            <h3 id="prop-heading">Prop Pulse</h3>
+          </div>
+          <div id="prop-pulse" class="prop-grid"></div>
+        </div>
       </section>
 
       <section id="admin" class="section admin-section" aria-labelledby="admin-heading">
