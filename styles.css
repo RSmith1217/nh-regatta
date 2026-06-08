@@ -130,6 +130,8 @@ h1 {
   font-size: clamp(3rem, 8vw, 6.9rem);
   line-height: 0.9;
   letter-spacing: 0;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 h2 {
@@ -717,6 +719,12 @@ textarea {
     min-height: auto;
   }
 
+  h1 {
+    max-width: 9.5ch;
+    font-size: clamp(4rem, 10vw, 5.8rem);
+    line-height: 0.92;
+  }
+
   .water-panel {
     min-height: 360px;
   }
@@ -735,6 +743,10 @@ textarea {
   .section-heading {
     align-items: start;
     flex-direction: column;
+  }
+
+  h1 {
+    font-size: clamp(3.35rem, 16vw, 4.75rem);
   }
 
   .market-strip {
