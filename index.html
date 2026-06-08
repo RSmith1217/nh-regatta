@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Al's Cardboard Regatta</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="hero">
+      <nav class="topbar" aria-label="Primary">
+        <a class="brand" href="#race-board" aria-label="Al's Cardboard Regatta home">
+          <span class="brand-mark" aria-hidden="true">AR</span>
+          <span>Al's Regatta Book</span>
+        </a>
+        <div class="nav-actions">
+          <a href="#race-board">Race Board</a>
+          <a href="#leaderboard">Leaderboard</a>
+          <a href="#admin">Results</a>
+        </div>
+      </nav>
+
+      <div class="hero-grid">
+        <section class="hero-copy" aria-labelledby="page-title">
+          <p class="eyebrow">Retirement Classic</p>
+          <h1 id="page-title">Al's Cardboard Regatta</h1>
+          <p class="lede">
+            Pick your winners, stake imaginary Al Bucks, and see which crews have the most
+            confidence before the cardboard hits the water.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#race-board">Open Race Board</a>
+            <a class="button secondary" href="#slip">View Bet Slip</a>
+          </div>
+        </section>
+
+        <section class="water-panel" aria-label="Animated cardboard regatta preview">
+          <div class="sun"></div>
+          <div class="boat boat-one">
+            <span class="sail"></span>
+            <span class="hull"></span>
+          </div>
+          <div class="boat boat-two">
+            <span class="sail"></span>
+            <span class="hull"></span>
+          </div>
+          <div class="wake wake-one"></div>
+          <div class="wake wake-two"></div>
+          <div class="wave wave-one"></div>
+          <div class="wave wave-two"></div>
+          <div class="wave wave-three"></div>
+        </section>
+      </div>
+    </header>
+
+    <main>
+      <section class="notice-band" aria-label="Entertainment notice">
+        <strong>Entertainment only.</strong>
+        No real money, prizes, or dignity are exchanged. All wagers use imaginary Al Bucks.
+      </section>
+
+      <section id="race-board" class="section race-section" aria-labelledby="race-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Race Board</p>
+            <h2 id="race-heading">Heat Matchups</h2>
+          </div>
+          <div class="board-tools" role="group" aria-label="Board filters">
+            <button class="tool-button active" type="button" data-filter="all">All</button>
+            <button class="tool-button" type="button" data-filter="open">Open</button>
+            <button class="tool-button" type="button" data-filter="decided">Decided</button>
+          </div>
+        </div>
+        <div id="race-board-list" class="race-board-list"></div>
+      </section>
+
+      <aside id="slip" class="bet-slip" aria-labelledby="slip-heading">
+        <form id="bet-form" class="slip-card">
+          <div class="slip-header">
+            <div>
+              <p class="eyebrow">Bet Slip</p>
+              <h2 id="slip-heading">Imaginary Wager</h2>
+            </div>
+            <button id="clear-slip" class="icon-button" type="button" aria-label="Clear bet slip" title="Clear bet slip">x</button>
+          </div>
+
+          <label for="bettor-name">
+            Your name
+            <input id="bettor-name" name="name" type="text" autocomplete="name" placeholder="Example: Mr. Smith" required>
+          </label>
+
+          <label for="boat-pick">
+            Pick
+            <select id="boat-pick" name="boat" required>
+              <option value="">Choose a boat</option>
+            </select>
+          </label>
+
+          <label for="wager">
+            Fake wager
+            <div class="wager-row">
+              <input id="wager" name="wager" type="number" min="1" max="500" value="25" required>
+              <span>Al Bucks</span>
+            </div>
+          </label>
+
+          <label for="note">
+            Prediction note
+            <textarea id="note" name="note" rows="3" placeholder="Why is this cardboard masterpiece unstoppable?"></textarea>
+          </label>
+
+          <button class="button primary full" type="submit">Lock In Fake Bet</button>
+          <p class="form-note" id="sheet-status">Alpha mode: picks save in this browser. Add a Google Apps Script URL in app.js to post to a Sheet.</p>
+        </form>
+      </aside>
+
+      <section id="leaderboard" class="section leaderboard-section" aria-labelledby="leaderboard-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Public Action</p>
+            <h2 id="leaderboard-heading">Leaderboard</h2>
+          </div>
+          <button id="reset-demo" class="button secondary" type="button">Reset Demo Picks</button>
+        </div>
+        <div id="leaderboard-list" class="leaderboard-grid"></div>
+      </section>
+
+      <section id="admin" class="section admin-section" aria-labelledby="admin-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Race Day</p>
+            <h2 id="admin-heading">Result Console</h2>
+          </div>
+        </div>
+        <div class="admin-layout">
+          <form id="result-form" class="admin-form">
+            <label for="result-heat">
+              Heat
+              <select id="result-heat" required></select>
+            </label>
+            <label for="result-winner">
+              Winner
+              <select id="result-winner" required></select>
+            </label>
+            <label for="result-time">
+              Official time
+              <input id="result-time" type="text" placeholder="Example: 1:42">
+            </label>
+            <button class="button primary" type="submit">Post Result</button>
+          </form>
+          <div id="results-list" class="results-list" aria-live="polite"></div>
+        </div>
+      </section>
+    </main>
+
+    <template id="race-card-template">
+      <article class="race-card">
+        <div class="heat-label"></div>
+        <div class="matchup"></div>
+      </article>
+    </template>
+
+    <template id="boat-template">
+      <button class="boat-card" type="button">
+        <span class="boat-meta"></span>
+        <span class="boat-name"></span>
+        <span class="crew"></span>
+        <span class="odds"></span>
+      </button>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
