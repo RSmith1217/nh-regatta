@@ -1,5 +1,11 @@
 const SHEET_NAME = "Fake Bets";
 
+function doGet() {
+  return ContentService
+    .createTextOutput(JSON.stringify({ ok: true, message: "Regatta action logger is live." }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
 function doPost(e) {
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = spreadsheet.getSheetByName(SHEET_NAME) || spreadsheet.insertSheet(SHEET_NAME);
