@@ -41,6 +41,11 @@ textarea {
   font: inherit;
 }
 
+button:disabled {
+  cursor: wait;
+  opacity: 0.68;
+}
+
 .hero {
   min-height: 88vh;
   padding: 20px clamp(18px, 4vw, 56px) 44px;
@@ -326,6 +331,42 @@ h2 {
   text-align: center;
 }
 
+.market-strip {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.7fr) minmax(150px, 0.8fr) minmax(220px, 1.5fr);
+  gap: 0;
+  max-width: 1180px;
+  margin: 0 auto;
+  border-inline: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  background: var(--panel);
+}
+
+.market-stat {
+  display: grid;
+  gap: 4px;
+  padding: 16px clamp(14px, 3vw, 22px);
+  border-right: 2px solid var(--line);
+}
+
+.market-stat:last-child {
+  border-right: 0;
+}
+
+.market-stat span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.market-stat strong {
+  color: var(--navy);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  line-height: 1;
+}
+
 .section {
   max-width: 1180px;
   margin: 0 auto;
@@ -513,6 +554,23 @@ textarea {
   line-height: 1.35;
 }
 
+.last-ticket {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 2px solid rgba(47, 125, 88, 0.35);
+  border-radius: 8px;
+  background: rgba(47, 125, 88, 0.08);
+  color: #26323a;
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.last-ticket strong {
+  color: var(--green);
+  font-size: 0.95rem;
+}
+
 .leaderboard-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -585,6 +643,31 @@ textarea {
   gap: 18px;
 }
 
+.admin-details {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-details summary {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 44px;
+  margin-bottom: 18px;
+  padding: 10px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.admin-details[open] summary {
+  background: var(--navy);
+  color: #fff;
+}
+
 .admin-form,
 .results-list {
   display: grid;
@@ -652,6 +735,21 @@ textarea {
   .section-heading {
     align-items: start;
     flex-direction: column;
+  }
+
+  .market-strip {
+    grid-template-columns: 1fr;
+    margin-inline: 18px;
+    border-top: 0;
+  }
+
+  .market-stat {
+    border-right: 0;
+    border-bottom: 2px solid var(--line);
+  }
+
+  .market-stat:last-child {
+    border-bottom: 0;
   }
 
   .matchup,

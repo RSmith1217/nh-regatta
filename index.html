@@ -15,6 +15,7 @@
         </a>
         <div class="nav-actions">
           <a href="#race-board">Race Board</a>
+          <a href="#prop-pulse">Props</a>
           <a href="#leaderboard">Leaderboard</a>
           <a href="#admin">Results</a>
         </div>
@@ -57,6 +58,21 @@
       <section class="notice-band" aria-label="Entertainment notice">
         <strong>Entertainment only.</strong>
         No real money, prizes, or dignity are exchanged. All wagers use imaginary Al Bucks.
+      </section>
+
+      <section class="market-strip" aria-label="Regatta action summary">
+        <div class="market-stat">
+          <span>Total Picks</span>
+          <strong id="total-picks">0</strong>
+        </div>
+        <div class="market-stat">
+          <span>Al Bucks In Play</span>
+          <strong id="total-bucks">0</strong>
+        </div>
+        <div class="market-stat wide">
+          <span>Public Favorite</span>
+          <strong id="public-favorite">Awaiting picks</strong>
+        </div>
       </section>
 
       <section id="race-board" class="section race-section" aria-labelledby="race-heading">
@@ -140,7 +156,8 @@
           </label>
 
           <button class="button primary full" type="submit">Lock In Fake Bet</button>
-          <p class="form-note" id="sheet-status">Alpha mode: picks save in this browser. Add a Google Apps Script URL in app.js to post to a Sheet.</p>
+          <p class="form-note" id="sheet-status" aria-live="polite">Picks save here and post to the Google Sheet.</p>
+          <div id="last-ticket" class="last-ticket" hidden></div>
         </form>
       </aside>
 
@@ -169,24 +186,27 @@
             <h2 id="admin-heading">Result Console</h2>
           </div>
         </div>
-        <div class="admin-layout">
-          <form id="result-form" class="admin-form">
-            <label for="result-heat">
-              Heat
-              <select id="result-heat" required></select>
-            </label>
-            <label for="result-winner">
-              Winner
-              <select id="result-winner" required></select>
-            </label>
-            <label for="result-time">
-              Official time
-              <input id="result-time" type="text" placeholder="Example: 1:42">
-            </label>
-            <button class="button primary" type="submit">Post Result</button>
-          </form>
-          <div id="results-list" class="results-list" aria-live="polite"></div>
-        </div>
+        <details class="admin-details">
+          <summary>Open Result Console</summary>
+          <div class="admin-layout">
+            <form id="result-form" class="admin-form">
+              <label for="result-heat">
+                Heat
+                <select id="result-heat" required></select>
+              </label>
+              <label for="result-winner">
+                Winner
+                <select id="result-winner" required></select>
+              </label>
+              <label for="result-time">
+                Official time
+                <input id="result-time" type="text" placeholder="Example: 1:42">
+              </label>
+              <button class="button primary" type="submit">Post Result</button>
+            </form>
+            <div id="results-list" class="results-list" aria-live="polite"></div>
+          </div>
+        </details>
       </section>
     </main>
 

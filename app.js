@@ -60,6 +60,15 @@ const storeKeys = {
 const byId = (id) => document.getElementById(id);
 const allBoats = races.flatMap((race) => race.boats.map((boat) => ({ ...boat, heat: race.heat })));
 
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function readJson(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
@@ -97,6 +106,29 @@ function getTotals() {
     current.wager += Number(bet.wager) || 0;
   });
   return totals;
+}
+
+function getMarketStats() {
+  const bets = getBets();
+  const totals = getTotals();
+  const favorite = allBoats
+    .map((boat) => ({ ...boat, ...totals.get(boat.id) }))
+    .sort((a, b) => b.picks - a.picks || b.wager - a.wager)[0];
+
+  return {
+    totalPicks: bets.length,
+    totalBucks: bets.reduce((sum, bet) => sum + (Number(bet.wager) || 0), 0),
+    favorite: favorite?.picks ? favorite : null
+  };
+}
+
+function renderMarketStats() {
+  const stats = getMarketStats();
+  byId("total-picks").textContent = String(stats.totalPicks);
+  byId("total-bucks").textContent = String(stats.totalBucks);
+  byId("public-favorite").textContent = stats.favorite
+    ? `${stats.favorite.name} (${stats.favorite.picks})`
+    : "Awaiting picks";
 }
 
 function impliedOdds(boatId) {
@@ -173,6 +205,10 @@ function populatePropSelects() {
 
 function selectBoat(boatId) {
   byId("boat-pick").value = boatId;
+  const boat = getBoat(boatId);
+  if (boat) {
+    byId("sheet-status").textContent = `${boat.name} added to the slip. Add props or lock it in.`;
+  }
   document.querySelectorAll(".boat-card").forEach((card) => {
     card.classList.toggle("selected", card.dataset.boatId === boatId);
   });
@@ -319,6 +355,7 @@ function bindEvents() {
     event.preventDefault();
     const boat = getBoat(byId("boat-pick").value);
     if (!boat) return;
+    const submitButton = event.target.querySelector('button[type="submit"]');
 
     const bet = {
       id: crypto.randomUUID(),
@@ -337,17 +374,31 @@ function bindEvents() {
       note: byId("note").value.trim()
     };
 
+    submitButton.disabled = true;
+    submitButton.textContent = "Sending Fake Bet...";
+    byId("sheet-status").textContent = "Sending your fake bet to the board...";
+
     const bets = [bet, ...getBets()];
     writeJson(storeKeys.bets, bets);
+    renderMarketStats();
     renderLeaderboard();
     renderPropPulse();
     renderRaceBoard(document.querySelector(".tool-button.active")?.dataset.filter || "all");
+    renderLastTicket(bet);
 
-    const posted = await submitToSheet(bet);
-    byId("sheet-status").textContent = posted
-      ? "Pick saved locally and sent to the Google Sheet."
-      : "Pick saved locally for alpha feedback. Google Sheet posting is not configured yet.";
-    event.target.reset();
+    try {
+      const posted = await submitToSheet(bet);
+      byId("sheet-status").textContent = posted
+        ? "Fake bet locked. Check the Google Sheet for the official log."
+        : "Fake bet saved here. Google Sheet posting is not configured yet.";
+      event.target.reset();
+      document.querySelectorAll(".boat-card").forEach((card) => card.classList.remove("selected"));
+    } catch {
+      byId("sheet-status").textContent = "Saved here, but the Google Sheet did not respond. Try again after checking the Apps Script deployment.";
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = "Lock In Fake Bet";
+    }
   });
 
   byId("clear-slip").addEventListener("click", () => {
@@ -366,7 +417,10 @@ function bindEvents() {
   byId("reset-demo").addEventListener("click", () => {
     writeJson(storeKeys.bets, demoBets);
     writeJson(storeKeys.results, {});
+    byId("last-ticket").hidden = true;
+    byId("last-ticket").innerHTML = "";
     renderRaceBoard();
+    renderMarketStats();
     renderLeaderboard();
     renderPropPulse();
     renderResults();
@@ -388,12 +442,30 @@ function bindEvents() {
   });
 }
 
+function renderLastTicket(bet) {
+  const ticket = byId("last-ticket");
+  const props = [
+    bet.exactTime ? `Time: ${bet.exactTime}` : "",
+    bet.firstSinkName ? `First sink: ${bet.firstSinkName}` : "",
+    bet.bestNameBoatName ? `Best name: ${bet.bestNameBoatName}` : "",
+    bet.chaosCall ? `Chaos: ${bet.chaosCall}` : ""
+  ].filter(Boolean);
+
+  ticket.hidden = false;
+  ticket.innerHTML = `
+    <span class="boat-meta">Last Ticket</span>
+    <strong>${escapeHtml(bet.name || "Anonymous")} backed ${escapeHtml(bet.boatName)}</strong>
+    <span>${escapeHtml(bet.wager)} Al Bucks${props.length ? ` · ${escapeHtml(props.join(" · "))}` : ""}</span>
+  `;
+}
+
 function init() {
   populateBoatSelect();
   populatePropSelects();
   populateResultsForm();
   bindEvents();
   renderRaceBoard();
+  renderMarketStats();
   renderLeaderboard();
   renderPropPulse();
   renderResults();
